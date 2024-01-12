@@ -9,27 +9,33 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     
     let search_func = if config.ignore_case { search_insensitive } else { search };
 
-    for line in search_func(config.query ,&contents) {
+    for line in search_func(&config.query ,&contents) {
         println!("{line}");
     }
 
     Ok(())
 }
 
-pub struct Config<'a> {
-    pub query: &'a str,
-    pub file_path: &'a str,
+pub struct Config {
+    pub query: String,
+    pub file_path: String,
     pub ignore_case: bool,
 }
 
-impl<'a> Config<'a> {
-    pub fn build(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("Not enough arguments");
-        }
+impl Config {
+    pub fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        args.next();
 
-        let query = &args[1];
-        let file_path = &args[2];
+        let query = match args.next() {
+            Some(q) => q,
+            None => return Err("Did not receive a query parameter"),
+        };
+
+        let file_path = match args.next() {
+            Some(f) => f,
+            None => return Err("Did not receive file_path parameter"),
+        };
+
         let ignore_case = env::var("IGNORE_CASE").is_ok();
 
         Ok(Config { query, file_path, ignore_case })
