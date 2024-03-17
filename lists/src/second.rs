@@ -110,6 +110,16 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 mod test {
     use super::List;
 
+    fn get_list() -> List<i32> {
+        let mut list = List::new();
+
+        list.push(1);
+        list.push(2);
+        list.push(3);
+
+        list
+    }
+
     #[test]
     fn basics() {
         let mut list = List::new();
@@ -158,11 +168,7 @@ mod test {
 
     #[test]
     fn into_iter() {
-        let mut list = List::new();
-        
-        list.push(1);
-        list.push(2);
-        list.push(3);
+        let list = get_list();
 
         let mut iter = list.into_iter();
         assert_eq!(iter.next(), Some(3));
@@ -173,11 +179,7 @@ mod test {
 
     #[test]
     fn iter() {
-        let mut list = List::new();
-
-        list.push(1);
-        list.push(2);
-        list.push(3);
+        let list = get_list();
 
         let mut iter = list.iter();
         assert_eq!(iter.next(), Some(&3));
@@ -197,11 +199,7 @@ mod test {
 
     #[test]
     fn iter_mut() {
-        let mut list = List::new();
-
-        list.push(1);
-        list.push(2);
-        list.push(3);
+        let mut list = get_list();
 
         let mut iter = list.iter_mut();
         assert_eq!(iter.next(), Some(&mut 3));
